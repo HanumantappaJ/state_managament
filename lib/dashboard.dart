@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:new_state_management/edit_page.dart';
 import 'package:new_state_management/providers/todo_provider.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
@@ -85,9 +86,12 @@ class _DashboardState extends ConsumerState<Dashboard> {
                               ),
                             ),
                           ),
-
                           IconButton(
                             onPressed: () {
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) =>
+                              //         EditPage(modelState: model)));
+
                               final editTextController =
                                   TextEditingController(text: model.Desc);
                               showDialog(
@@ -115,7 +119,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
                                                   Navigator.of(context).pop();
                                                 },
                                                 child: const Text(
-                                                  "Save",
+                                                  "Update",
                                                 )),
                                           ),
                                         ],

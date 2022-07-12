@@ -21,18 +21,15 @@ class TodoNotifier extends StateNotifier<List<ModelState>> {
   }
 
   void updateDesc(int index, String text, Color? favColor) {
-    state = [
-      for (final todo in state)
-        if(todo.id == state[index].id)
-          ModelState(
-              isInFavorite: state[index].isInFavorite,
-              Desc:text,
-            favColor: favColor,
-          )
-      else
-        todo
-    ];
+    state = state.map((model) {
+      return model.id == state[index].id ? ModelState(favColor:  favColor, Desc: text, isInFavorite:state[index].isInFavorite, ) : model;
+    }).toList();
   }
 
+  void updateDesc1(ModelState modelState, String tesfxt, Color? favColor) {
+    state = state.map((model) {
+      return model.id == modelState.id ? ModelState(favColor:  favColor, Desc: text, isInFavorite:modelState.isInFavorite, ) : model;
+    }).toList();
+  }
 
 }
