@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:new_state_management/models/modelState.dart';
 import 'package:new_state_management/providers/todo_provider.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
-   Dashboard({Key? key}) : super(key: key);
+  Dashboard({Key? key}) : super(key: key);
+
   @override
   ConsumerState<Dashboard> createState() => _DashboardState();
 }
-class _DashboardState extends ConsumerState<Dashboard>{
+
+class _DashboardState extends ConsumerState<Dashboard> {
   final formKey = GlobalKey<FormState>();
   final textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    var todoWatcher=ref.watch(todoProvider.notifier);
+    var todoWatcher = ref.watch(todoProvider.notifier);
     var todoList = ref.watch(todoProvider);
     return Scaffold(
       appBar: AppBar(
@@ -46,16 +47,19 @@ class _DashboardState extends ConsumerState<Dashboard>{
                       padding: EdgeInsets.all(10),
                       child: ElevatedButton(
                           onPressed: () {
-                            if(formKey.currentState!.validate()){
+                            if (formKey.currentState!.validate()) {
                               todoWatcher.onSaveTodo(textController.text);
                               formKey.currentState!.save();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Todo Added to List"),
-                                duration: Duration(seconds: 3),
-                                backgroundColor: Colors.green,),
+                                const SnackBar(
+                                  content: Text("Todo Added to List"),
+                                  duration: Duration(seconds: 3),
+                                  backgroundColor: Colors.green,
+                                ),
                               );
                             }
-                          }, child: const Text("Submit")),
+                          },
+                          child: const Text("Submit")),
                     )
                   ],
                 )),
@@ -63,43 +67,83 @@ class _DashboardState extends ConsumerState<Dashboard>{
           Expanded(
               child: ListView.builder(
                   itemCount: todoList.length,
-                  itemBuilder: (BuildContext context, int index){
-                   return Card(
+                  itemBuilder: (BuildContext context, int index) {
+                    var model = todoList[index];
+                    return Card(
                       child: Row(
                         children: [
-                          SizedBox(width: 20,),
+                          SizedBox(
+                            width: 20,
+                          ),
                           Expanded(
-                            child:
-                            Text(
-                              todoList[index].Desc ?? '',
+                            child: Text(
+                              // todoList[index].Desc ?? '',
+                              model.Desc ?? '',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                              ),),
+                              ),
+                            ),
                           ),
-                          // IconButton(
-                          //   onPressed: () {
-                          //     // todoWatcher.setModelColor(todoWatcher.todoList[index], Colors.red);
-                          //   },
-                          //   icon: const Icon(Icons.favorite, color: Colors.blueAccent,),
-                          // ),
+
                           IconButton(
                             onPressed: () {
-                              todoWatcher.onRemoveTodo(todoList[index].id?? '');
+                              final editTextController =
+                                  TextEditingController(text: model.Desc);
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Container(
+                                      padding: EdgeInsets.all(20),
+                                      child: AlertDialog(
+                                        content: TextField(
+                                          controller: editTextController,
+                                        ),
+                                        actions: [
+                                          Container(
+                                            child: GestureDetector(
+                                                onTap: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: const Text("Cancel")),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.all(10),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  todoWatcher.updateDesc(index,
+                                                      editTextController.text, model.favColor);
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text(
+                                                  "Save",
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
                             },
-                            icon: const Icon(Icons.delete,color: Colors.red,),
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.red,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              todoWatcher
+                                  .onRemoveTodo(todoList[index].id ?? '');
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
                           ),
                         ],
                       ),
                     );
-                  }
-              )),
+                  })),
         ],
       ),
     );
   }
-
-
 }
-
-

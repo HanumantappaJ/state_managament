@@ -5,6 +5,8 @@ var uuid = Uuid();
 class ModelState {
   final String? id;
   final String? Desc;
+  final Color? favColor;
+  bool isInFavorite = false;
 
-  ModelState( {this.Desc, String? id}): id = id ?? uuid.v4();
+  ModelState( {this.Desc, this.favColor, required this.isInFavorite ,  String? id}): id = id ?? uuid.v4();
 }
