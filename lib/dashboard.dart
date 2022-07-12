@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:new_state_management/models/modelState.dart';
 import 'package:new_state_management/providers/todo_provider.dart';
 
-class Dashboard extends ConsumerWidget {
-  Dashboard({Key? key}) : super(key: key);
+class Dashboard extends ConsumerStatefulWidget {
+   Dashboard({Key? key}) : super(key: key);
+  @override
+  ConsumerState<Dashboard> createState() => _DashboardState();
+}
+class _DashboardState extends ConsumerState<Dashboard>{
   final formKey = GlobalKey<FormState>();
-  // final textController = TextEditingController();
+  final textController = TextEditingController();
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
-    final todoWatcher= ref.watch(todoProvider);
-    final textController = TextEditingController();
+  Widget build(BuildContext context) {
+    var todoWatcher=ref.watch(todoProvider.notifier);
+    var todoList = ref.watch(todoProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("State Management"),
@@ -57,7 +62,7 @@ class Dashboard extends ConsumerWidget {
           ),
           Expanded(
               child: ListView.builder(
-                  itemCount: todoWatcher.todoList.length,
+                  itemCount: todoList.length,
                   itemBuilder: (BuildContext context, int index){
                    return Card(
                       child: Row(
@@ -66,7 +71,7 @@ class Dashboard extends ConsumerWidget {
                           Expanded(
                             child:
                             Text(
-                              todoWatcher.todoList[index].toString(),
+                              todoList[index].Desc ?? '',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -80,7 +85,7 @@ class Dashboard extends ConsumerWidget {
                           // ),
                           IconButton(
                             onPressed: () {
-                              todoWatcher.onRemoveTodo(index);
+                              todoWatcher.onRemoveTodo(todoList[index].id?? '');
                             },
                             icon: const Icon(Icons.delete,color: Colors.red,),
                           ),
@@ -93,6 +98,8 @@ class Dashboard extends ConsumerWidget {
       ),
     );
   }
+
+
 }
 
 
